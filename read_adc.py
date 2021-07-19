@@ -1,9 +1,9 @@
 import adafruit_mcp3xxx.mcp3008 as MCP
 import board
 import busio
-import csv
 import digitalio
 from adafruit_mcp3xxx.analog_in import AnalogIn
+
 
 class ReadAdc:
   def __init__(self):

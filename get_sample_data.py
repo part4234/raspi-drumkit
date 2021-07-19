@@ -1,6 +1,8 @@
 import csv
 import time
+
 from read_adc import ReadAdc
+
 
 def main():
   input('Press Enter to start logging...')
@@ -14,7 +16,7 @@ def main():
   write_csv('./data/data.csv', data)
 
 def write_csv(path, data):
-  print('Start writing to ' + path)
+  print(f'Start writing to {path}')
   with open(path, mode='w') as file:
     writer = csv.writer(file, delimiter=",")
     header = ['value', 'voltage']
@@ -24,12 +26,3 @@ def write_csv(path, data):
 
 if __name__ == "__main__":
   main()
-
-# while True:
-#   print value
-#   if chan.value > 400:
-#     print(chan.value)
-#   if chan.voltage > 0.04:
-#     print(chan.voltage)
-#   values.append(chan.value)
-#   voltages.append(chan.voltage)
