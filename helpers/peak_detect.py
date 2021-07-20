@@ -7,6 +7,10 @@ import numpy as np
 
 class PeakDetect():
 	def __init__(self, lag, threshold, influence):
+		print(f'[PeakDetect] lag {lag}')
+		print(f'[PeakDetect] threshold {threshold}')
+		print(f'[PeakDetect] influence {influence}')
+
 		self.y = []
 		self.length = 0
 		self.lag = lag
@@ -27,7 +31,7 @@ class PeakDetect():
 		# handle lag
 		i = len(self.y) - 1
 		if i < self.lag:
-			return 0
+			return (0, 0)
 		elif i == self.lag:
 			self.signals = [0] * len(self.y)
 			self.filteredY = np.array(self.y).tolist()
@@ -36,7 +40,7 @@ class PeakDetect():
 			self.avgFilter[self.lag - 1] = np.mean(self.y[0:self.lag]).tolist()
 			self.stdFilter[self.lag - 1] = np.std(self.y[0:self.lag]).tolist()
 			self.strengths = [0] * len(self.y)
-			return 0
+			return (0, 0)
 
 		# add new entry
 		self.signals += [0]

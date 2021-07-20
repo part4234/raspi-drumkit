@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from peak_detect import RealTimePeakDetect
+from .peak_detect import PeakDetect
 
 
-def plot(data, alg: RealTimePeakDetect):
+def plot(data, alg: PeakDetect):
   print('[Plot] plotting graphs...')
   x = np.arange(1, len(data)+1)
   avgFilter = np.asarray(alg.avgFilter)
