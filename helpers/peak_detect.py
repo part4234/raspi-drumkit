@@ -5,7 +5,7 @@
 import numpy as np
 
 
-class RealTimePeakDetect():
+class PeakDetect():
 	def __init__(self, lag, threshold, influence):
 		self.y = []
 		self.length = 0

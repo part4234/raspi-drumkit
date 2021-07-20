@@ -5,7 +5,7 @@ from peak_detect import RealTimePeakDetect
 
 
 def plot(data, alg: RealTimePeakDetect):
-  print('Start ploting graphs...')
+  print('[Plot] plotting graphs...')
   x = np.arange(1, len(data)+1)
   avgFilter = np.asarray(alg.avgFilter)
   stdFilter = np.asarray(alg.stdFilter)

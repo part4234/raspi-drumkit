@@ -1,7 +1,7 @@
 import csv
 import time
 
-from read_adc import ReadAdc
+from helpers.adc_reader import ReadAdc
 
 
 def main():

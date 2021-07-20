@@ -1,6 +1,6 @@
 import csv
-from peak_detect import RealTimePeakDetect
-from plot_graph import plot
+from helpers.peak_detect import RealTimePeakDetect
+from helpers.plot import plot
 
 def main():
   lag = 25 # 30, 20 (too small)
@@ -35,5 +35,5 @@ def read_csv():
   
   return (values, voltages)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
   main()

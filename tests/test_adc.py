@@ -1,9 +1,8 @@
-import os
 import time
+import adafruit_mcp3xxx.mcp3008 as MCP
+import board
 import busio
 import digitalio
-import board
-import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 
 # create the spi bus
@@ -48,7 +47,7 @@ while True:
   # how much has it changed since the last read?
   pot_adjust = abs(trim_pot - last_read)
 
-  print(str(chan1.value) + ' V')
+  print(str(chan0.value) + ' V')
 
   # if pot_adjust > tolerance:
   #   trim_pot_changed = True

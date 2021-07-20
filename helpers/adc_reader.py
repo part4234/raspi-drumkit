@@ -5,8 +5,9 @@ import digitalio
 from adafruit_mcp3xxx.analog_in import AnalogIn
 
 
-class ReadAdc:
+class AdcReader:
   def __init__(self):
+    print('[AdcReader] init')
     # create the spi bus
     spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
     # create the chip select
