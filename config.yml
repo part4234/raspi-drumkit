@@ -1,0 +1,13 @@
+lag: 50
+threshold:
+  value:
+  scale: 1.1
+  buffer: 50
+peak:
+  value:
+  scale: 1.1
+  buffer: 100
+volume:
+  lowest: 0.1
+  scale: 1.2
+cal_time: 5
