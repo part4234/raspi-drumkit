@@ -15,14 +15,14 @@ class DetectHit:
     def __init__(self):
         self.mixer = Mixer()
         self.adc = AdcReader()
-        self.load_config()
+        self.__load_config()
 
         # calibration
         input('Press Enter to start calibration.')
-        self.threshold = self.get_threshold()
-        self.peak = self.get_peak()
+        self.threshold = self.__get_threshold()
+        self.peak = self.__get_peak()
 
-    def load_config(self):
+    def __load_config(self):
         self.lag = 50
         self.threshold_scale = 1.1
         self.threshold_buffer = 50
@@ -35,11 +35,11 @@ class DetectHit:
         #     config = yaml.load(file, Loader=SafeLoader)
         
 
-    def calibrate(self):
-        self.threshold = self.get_threshold()
-        self.peak = self.get_peak()
+    def __calibrate(self):
+        self.threshold = self.__get_threshold()
+        self.peak = self.__get_peak()
 
-    def get_threshold(self):
+    def __get_threshold(self):
         print('Calibrating threshold...')
         print('Please leave the sensor idle.')
 
@@ -52,7 +52,7 @@ class DetectHit:
         print('Threshold:', threshold)
         return threshold
 
-    def get_peak(self):
+    def __get_peak(self):
         print('Calibrating peak...')
         print('Please hit with hardest strength.')
 
