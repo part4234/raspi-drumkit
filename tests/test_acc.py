@@ -78,11 +78,14 @@ while True:
     #       Gz, u'\u00b0' + "/s", "\tAx=%.2f g" % Ax, "\tAy=%.2f g" % Ay, "\tAz=%.2f g" % Az)
     
     # print gyroscope value
-    if abs(Gx) > 5 or abs(Gy) > 5 or abs(Gz) > 5:
-        print("Gx=%.2f" % Gx, u'\u00b0' + "/s", "\tGy=%.2f" % Gy, u'\u00b0' + "/s", "\tGz=%.2f" % Gz)
+    # if abs(Gx) > 5 or abs(Gy) > 5 or abs(Gz) > 5:
+    #     print("Gx=%.2f" % Gx, u'\u00b0' + "/s", "\tGy=%.2f" % Gy, u'\u00b0' + "/s", "\tGz=%.2f" % Gz)
 
     # print accelerometer value
     # if Ax > 1 or Ay > 1 or Az > 1:
     #     print("Ax=%.2f g" % Ax, "\tAy=%.2f g" % Ay, "\tAz=%.2f g" % Az)
+
+    if Gz > 1:
+        print("\tGz=%.2f g" % Gz)
     
-    sleep(0.1)
+    # sleep(0.1)

@@ -19,9 +19,9 @@ class DetectTap:
         self.__calibrate()
 
     def __load_config(self):
-        self.lag = 0.1
-        self.threshold = 0.2
-        self.peak_scale = 1.1
+        self.tap_shock = 0.01
+        self.tap_quiet = 0.05
+        self.threshold = 2
         self.peak_buffer = 0.2
         self.volume_lowest = 0.1
         self.volume_scale = 1.2
@@ -38,9 +38,9 @@ class DetectTap:
         t_end = time.time() + self.cal_time
         while time.time() < t_end:
             max_val = max(max_val, self.acc.accleration[2])
-        peak = max_val * self.peak_scale + self.peak_buffer
+        peak = max_val + self.peak_buffer
 
-        print('Limit:', peak)
+        print('Peak:', peak)
         return peak
 
     def __get_volume(self, value):
@@ -53,25 +53,38 @@ class DetectTap:
         return volume
 
     def start(self):
-        prev_time = 0
+        tap_end_t = 0
+        tap_start_t = 0
         tap_count = 0
         tap_strength = 0
+        tap = False
 
         while True:
-            if time.time() - prev_time < self.lag:
-                continue
-
             value = self.acc.accleration[2]
-            if value > self.threshold:
-                if value > tap_strength:
-                    tap_strength = value
-                else:
-                    volume = self.__get_volume(value)
+            angle = self.acc.gyroscope[1]
+            curr_t = time.time()
+
+            if not tap:
+                if curr_t - tap_end_t < self.tap_quiet:
+                    continue
+                if abs(value) > self.threshold and value < 0:
+                    tap = True
+                    tap_start_t = curr_t
+                    tap_strength = max(abs(value), tap_strength)
+
+            else:
+                tap_strength = max(abs(value), tap_strength)
+
+                if curr_t - tap_start_t >= self.tap_shock:
+                    # play sound
+                    volume = self.__get_volume(tap_strength)
                     self.mixer.playKick(volume)
 
                     tap_count += 1
                     print(f'{tap_count}: {tap_strength}, {volume}')
-                    prev_time = time.time()
+
+                    tap = False
+                    tap_end_t = curr_t
                     tap_strength = 0
 
 

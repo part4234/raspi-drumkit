@@ -59,7 +59,7 @@ class DetectHit:
             max_val = max(max_val, self.adc.chan.value)
         peak = max_val * self.peak_scale + self.peak_buffer
 
-        print('Limit:', peak)
+        print('Peak:', peak)
         return peak
 
     def start(self):

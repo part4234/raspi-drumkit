@@ -1,10 +1,12 @@
 import smbus  # import SMBus module of I2C
 
 # MPU6050 Registers and their Address
+# https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf
 PWR_MGMT_1 = 0x6B
 SMPLRT_DIV = 0x19
 CONFIG = 0x1A
 GYRO_CONFIG = 0x1B
+ACCEL_CONFIG = 0x1C
 INT_ENABLE = 0x38
 ACCEL_XOUT_H = 0x3B
 ACCEL_YOUT_H = 0x3D
@@ -18,14 +20,16 @@ class AccReader:
     def __init__(self):
         print('[AccReader] init')
         bus = smbus.SMBus(1)
-        # write to sample rate register
+        # sample rate
         bus.write_byte_data(MPU_ADDR, SMPLRT_DIV, 7)
-        # write to power management register
+        # power management
         bus.write_byte_data(MPU_ADDR, PWR_MGMT_1, 1)
-        # write to Configuration register
+        # configuration 
         bus.write_byte_data(MPU_ADDR, CONFIG, 0)
-        # write to Gyro configuration register
+        # gyroscope configuration +-2000 deg/s
         bus.write_byte_data(MPU_ADDR, GYRO_CONFIG, 24)
+        # accelerometer configuration +-16g
+        bus.write_byte_data(MPU_ADDR, ACCEL_CONFIG, 24)
         # write to interrupt enable register
         bus.write_byte_data(MPU_ADDR, INT_ENABLE, 1)
         self.__bus = bus
@@ -50,9 +54,13 @@ class AccReader:
         acc_y = self.__read_raw_data(ACCEL_YOUT_H)
         acc_z = self.__read_raw_data(ACCEL_ZOUT_H)
 
-        Ax = acc_x/16384.0
-        Ay = acc_y/16384.0
-        Az = acc_z/16384.0
+        # +-2g: 16384
+        # +-4g: 8192
+        # +-8g: 4096
+        # +-16g: 2048
+        Ax = acc_x/2048.0
+        Ay = acc_y/2048.0
+        Az = acc_z/2048.0
 
         return (Ax, Ay, Az)
 
