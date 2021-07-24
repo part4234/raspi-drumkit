@@ -17,10 +17,8 @@ class DetectHit:
         self.adc = AdcReader()
         self.__load_config()
 
-        # calibration
         input('Press Enter to start calibration.')
-        self.threshold = self.__get_threshold()
-        self.peak = self.__get_peak()
+        self.__calibrate()
 
     def __load_config(self):
         self.lag = 50
@@ -33,7 +31,6 @@ class DetectHit:
         self.cal_time = 5
         # with open('config.yml') as file:
         #     config = yaml.load(file, Loader=SafeLoader)
-        
 
     def __calibrate(self):
         self.threshold = self.__get_threshold()
@@ -66,22 +63,23 @@ class DetectHit:
         return peak
 
     def start(self):
-        prev_count = 0
-        count = 0
+        prev_time = 0
+        time = 0
         hit_count = 0
         hit_strength = 0
 
         while True:
-            if count > 999999:
-                count = 0
+            # reset time if too large
+            if time > 999999:
+                time = 0
             else:
-                count += 1
+                time += 1
 
             value = self.adc.chan.value
             if value > self.threshold:
                 hit_strength = max(hit_strength, value)
 
-                if count - prev_count > self.lag:  # is a hit
+                if time - prev_time > self.lag:  # is a hit
                     # play sound
                     volume = (value - self.threshold) * \
                         self.volume_scale / (self.peak - self.threshold)
@@ -94,7 +92,7 @@ class DetectHit:
                     # update counts
                     hit_count += 1
                     print(f'{hit_count}: {hit_strength}, {volume}')
-                    prev_count = count
+                    prev_time = time
                     hit_strength = 0
 
 

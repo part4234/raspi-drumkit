@@ -22,16 +22,12 @@ GYRO_ZOUT_H = 0x47
 def MPU_Init():
     # write to sample rate register
     bus.write_byte_data(Device_Address, SMPLRT_DIV, 7)
-
     # Write to power management register
     bus.write_byte_data(Device_Address, PWR_MGMT_1, 1)
-
     # Write to Configuration register
     bus.write_byte_data(Device_Address, CONFIG, 0)
-
     # Write to Gyro configuration register
     bus.write_byte_data(Device_Address, GYRO_CONFIG, 24)
-
     # Write to interrupt enable register
     bus.write_byte_data(Device_Address, INT_ENABLE, 1)
 
@@ -81,9 +77,12 @@ while True:
     # print("Gx=%.2f" % Gx, u'\u00b0' + "/s", "\tGy=%.2f" % Gy, u'\u00b0' + "/s", "\tGz=%.2f" %
     #       Gz, u'\u00b0' + "/s", "\tAx=%.2f g" % Ax, "\tAy=%.2f g" % Ay, "\tAz=%.2f g" % Az)
     
-    # print gyroscope value 
-    print("Gx=%.2f" % Gx, u'\u00b0' + "/s", "\tGy=%.2f" % Gy, u'\u00b0' + "/s", "\tGz=%.2f" % Gz)
+    # print gyroscope value
+    if abs(Gx) > 5 or abs(Gy) > 5 or abs(Gz) > 5:
+        print("Gx=%.2f" % Gx, u'\u00b0' + "/s", "\tGy=%.2f" % Gy, u'\u00b0' + "/s", "\tGz=%.2f" % Gz)
 
     # print accelerometer value
-    # print("Ax=%.2f g" % Ax, "\tAy=%.2f g" % Ay, "\tAz=%.2f g" % Az)
+    # if Ax > 1 or Ay > 1 or Az > 1:
+    #     print("Ax=%.2f g" % Ax, "\tAy=%.2f g" % Ay, "\tAz=%.2f g" % Az)
+    
     sleep(0.1)
