@@ -23,11 +23,11 @@ class Controller:
 
 
     def __load_config(self):
-        self.tap_shock = 0.05
-        self.tap_quiet = 0.05
+        self.tap_shock = 0.01
+        self.tap_quiet = 0.01
         self.tap_peak_buffer = 0.2
 
-        self.hit_lag = 0.1
+        self.hit_lag = 0.01
         self.hit_threshold_scale = 1.1
         self.hit_threshold_buffer = 50
         self.hit_peak_scale = 1.1
