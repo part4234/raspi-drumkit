@@ -21,12 +21,13 @@ class Controller:
         self.__calibrate_hit()
         self.__calibrate_tap()
 
+
     def __load_config(self):
-        self.tap_shock = 0.01
-        self.tap_quiet = 0.05
+        self.tap_shock = 10
+        self.tap_quiet = 10
         self.tap_peak_buffer = 0.2
 
-        self.hit_lag = 50
+        self.hit_lag = 10
         self.hit_threshold_scale = 1.1
         self.hit_threshold_buffer = 50
         self.hit_peak_scale = 1.1
@@ -36,13 +37,16 @@ class Controller:
         self.volume_scale = 1.2
         self.cal_time = 5
 
+
     def __calibrate_hit(self):
         self.hit_threshold = self.__get_hit_threshold()
         self.hit_peak = self.__get_hit_peak()
 
+
     def __calibrate_tap(self):
-        self.tap_threshold = 400
+        self.tap_threshold = 2
         self.tap_peak = self.__get_tap_peak()
+
 
     def __get_hit_threshold(self):
         print('Please leave the sensor idle.')
@@ -56,37 +60,59 @@ class Controller:
         print('Hit threshold:', threshold)
         return threshold
 
-    def __get_hit_peak(self):
-        print('Please hit with hardest strength.')
 
-        max_val = 0
+    def __get_hit_peak(self):
+        print('Keep hitting.')
+
+        max_vals = [0, 0, 0, 0]
         t_end = time.time() + self.cal_time
+
         while time.time() < t_end:
-            max_val = max(max_val, self.adc.chan.value)
-        peak = max_val * self.hit_peak_scale + self.hit_peak_buffer
+            val = self.adc.chan.value
+            for i, max_val in enumerate(max_vals):
+                if val > max_val:
+                    max_vals[i] = val
+                    break
+
+        peak = self.__get_avg(max_vals[1:]) * self.hit_peak_scale + self.hit_peak_buffer
 
         print('Hit peak:', peak)
         return peak
 
-    def __get_tap_peak(self):
-        print('Please tap with hardest strength.')
 
-        max_val = 0
+    def __get_tap_peak(self):
+        print('Keep tapping.')
+
+        max_vals = [0, 0, 0, 0]
         t_end = time.time() + self.cal_time
+
         while time.time() < t_end:
-            max_val = max(max_val, self.acc.accleration[2])
-        peak = max_val + self.tap_peak_buffer
+            val = self.acc.accleration[2]
+            for i, max_val in enumerate(max_vals):
+                if val > max_val:
+                    max_vals[i] = val
+                    break
+
+        peak = self.__get_avg(max_vals[1:]) + self.tap_peak_buffer
 
         print('Tap peak:', peak)
         return peak
 
+
     def start(self):
         self.__init_counters()
         while True:
+            if self.curr_t > 999999:
+                self.curr_t = 0
+            else:
+                self.curr_t += 1
             self.__detect_tap(self.acc.accleration[2])
             self.__detect_hit(self.adc.chan.value)
 
+
     def __init_counters(self):
+        self.curr_t = 0;
+
         self.hit_prev_t = 0
         self.hit_count = 0
         self.hit_strength = 0
@@ -97,21 +123,20 @@ class Controller:
         self.tap_strength = 0
         self.tap = False
 
-    def __detect_tap(self, value):
-        curr_t = time.time()
 
+    def __detect_tap(self, value):
         if not self.tap:
-            if curr_t - self.tap_end_t < self.tap_quiet:
+            if self.curr_t - self.tap_end_t < self.tap_quiet:
                 return
             if abs(value) > self.tap_threshold and value < 0:
                 self.tap = True
-                self.tap_start_t = curr_t
+                self.tap_start_t = self.curr_t
                 self.tap_strength = max(abs(value), self.tap_strength)
 
         else:
             self.tap_strength = max(abs(value), self.tap_strength)
 
-            if curr_t - self.tap_start_t >= self.tap_shock:
+            if self.curr_t - self.tap_start_t >= self.tap_shock:
                 volume = self.__get_volume(self.tap_strength, self.tap_peak, self.hit_threshold)
                 self.mixer.playKick(volume)
 
@@ -119,22 +144,21 @@ class Controller:
                 print(f'Tap {self.tap_count}: {self.tap_strength}, {volume}')
 
                 self.tap = False
-                self.tap_end_t = curr_t
+                self.tap_end_t = self.curr_t
                 self.tap_strength = 0
 
-    def __detect_hit(self, value):
-        curr_t = time.time()
 
+    def __detect_hit(self, value):
         if value > self.hit_threshold:
             self.hit_strength = max(self.hit_strength, value)
 
-            if curr_t - self.hit_prev_t > self.hit_lag:
+            if self.curr_t - self.hit_prev_t > self.hit_lag:
                 volume = self.__get_volume(self.hit_strength, self.hit_peak, self.hit_threshold)
                 self.mixer.playSnare(volume)
 
                 self.hit_count += 1
                 print(f'Hit {self.hit_count}: {self.hit_strength}, {volume}')
-                self.hit_prev_t = curr_t
+                self.hit_prev_t = self.curr_t
                 self.hit_strength = 0
 
     def __get_volume(self, value, peak, threshold):
@@ -144,6 +168,9 @@ class Controller:
         elif volume > 1.0:
             volume = 1.0
         return volume
+
+    def __get_avg(self, array):
+        return sum(array) / len(array)
 
 
 if __name__ == '__main__':

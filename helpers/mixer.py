@@ -1,5 +1,6 @@
 from os import system
 from pygame import mixer
+import pygame
 
 PATH = '/home/pi/Documents/Project/audio/'
 SAMPLE = 'beep.wav'
