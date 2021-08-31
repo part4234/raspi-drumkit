@@ -137,11 +137,10 @@ class Controller:
             self.tap_strength = max(abs(value), self.tap_strength)
 
             if self.curr_t - self.tap_start_t >= self.tap_shock:
-                volume = self.__get_volume(self.tap_strength, self.tap_peak, self.tap_threshold)
-                self.mixer.playKick(volume)
-
                 self.tap_count += 1
-                print(f'Tap {self.tap_count}: {self.tap_strength}, {volume}')
+                volume = self.__get_volume(self.tap_strength, self.tap_peak, self.tap_threshold)
+                # print(f'Tap {self.tap_count}: {self.tap_strength}, {volume}')
+                self.mixer.playKick(volume)
 
                 self.tap = False
                 self.tap_end_t = self.curr_t
@@ -154,10 +153,10 @@ class Controller:
 
             if self.curr_t - self.hit_prev_t > self.hit_lag:
                 volume = self.__get_volume(self.hit_strength, self.hit_peak, self.hit_threshold)
+                self.hit_count += 1
+                # print(f'Hit {self.hit_count}: {self.hit_strength}, {volume}')
                 self.mixer.playSnare(volume)
 
-                self.hit_count += 1
-                print(f'Hit {self.hit_count}: {self.hit_strength}, {volume}')
                 self.hit_prev_t = self.curr_t
                 self.hit_strength = 0
 
